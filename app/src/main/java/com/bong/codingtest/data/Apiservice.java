@@ -8,9 +8,9 @@ import retrofit2.http.Query;
 public interface Apiservice {
     String USER_API_URL = "https://api.github.com/";
 
-    @GET ("search/users?q=")
+    @GET ("search/users?q=a")
     Call<User> getUser(@Query("login") String login);
 
-    @GET ("search/users?q=")
+    @GET ("search/users?q=a")
     Single<User> getUserRx(@Query("login") String login);
 }
