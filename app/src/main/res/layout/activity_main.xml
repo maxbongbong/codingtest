@@ -29,7 +29,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center"
             android:text="Hello World!" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
