@@ -61,31 +61,32 @@ public class RetrofitMaker {
             if (BuildConfig.DEBUG) {
                 //httpClientBuilder.addInterceptor(new MockInterceptor(context));
                 //httpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
-                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        if (isJSONValid(message))
-                            Logger.json(message);
-                        else
-                            Log.d("PRETTYLOGGER", message);
-                    }
-
-                    public boolean isJSONValid(String jsonInString) {
-                        try {
-                            new JSONObject(jsonInString);
-                        } catch (JSONException ex) {
-                            // edited, to include @Arthur's comment
-                            // e.g. in case JSONArray is valid as well...
-                            try {
-                                new JSONArray(jsonInString);
-                            } catch (JSONException ex1) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-
-                });
+                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.e("PRETTYLOGGER", "message:" + message));
+//                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+//                    @Override
+//
+//                    public void log(String message) {
+//                        if (isJSONValid(message))
+//                            Logger.json(message);
+//                        else
+//                            Log.e("PRETTYLOGGER", "message = " + message);
+//                    }
+//
+//                    public boolean isJSONValid(String jsonInString) {
+//                        try {
+//                            new JSONObject(jsonInString);
+//                        } catch (JSONException ex) {
+//                            // edited, to include @Arthur's comment
+//                            // e.g. in case JSONArray is valid as well...
+//                            try {
+//                                new JSONArray(jsonInString);
+//                            } catch (JSONException ex1) {
+//                                return false;
+//                            }
+//                        }
+//                        return true;
+//                    }
+//                });
                 logging.level(HttpLoggingInterceptor.Level.BODY);
                 httpClientBuilder.addInterceptor(logging);
             }

@@ -1,11 +1,8 @@
 package com.bong.codingtest.data;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import java.util.List;
 
-@Entity
 public class User {
-    @PrimaryKey
     public String login;
     public int id;
     public String node_id;
@@ -24,5 +21,40 @@ public class User {
     public String received_events_url;
     public String type;
     public boolean site_admin;
-    public int score;
+    public Integer score;
+    public int itemViewType = 1;
+
+    public int getItemViewType() {
+        return itemViewType;
+    }
+
+    public void setItemViewType(int itemViewType) {
+        this.itemViewType = itemViewType;
+    }
+
+
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getAvatar_url() {
+        return avatar_url;
+    }
+
+    public void setAvatar_url(String avatar_url) {
+        this.avatar_url = avatar_url;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
 }

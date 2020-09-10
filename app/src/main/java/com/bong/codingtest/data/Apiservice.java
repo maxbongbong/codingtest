@@ -1,16 +1,19 @@
 package com.bong.codingtest.data;
 
+import java.util.List;
+
 import io.reactivex.Single;
-import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface Apiservice {
     String USER_API_URL = "https://api.github.com/";
 
     @GET ("search/users?q=a")
-    Call<User> getUser(@Query("login") String login);
+    Single<Item> getUserRx(@Query("login") String login);
 
-    @GET ("search/users?q=a")
-    Single<User> getUserRx(@Query("login") String login);
+    @GET
+    Single<List<Orgs>> getorgs(@Url String orgs);
 }
