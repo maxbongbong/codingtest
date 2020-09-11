@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Dispatcher;
 import okhttp3.Interceptor;
@@ -30,6 +31,9 @@ public class RetrofitMaker {
     private OkHttpClient okHttpClient;
     private static Retrofit retrofit;
     Dispatcher dispatcher;
+    private static final int timeout_read = 60;
+    private static final int timeout_connect = 60;
+    private static final int timeout_write = 60;
 
     private static Retrofit getRetrofit(){
         if (retrofit == null) {
@@ -56,37 +60,20 @@ public class RetrofitMaker {
         if (okHttpClient == null) {
             OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
             //httpClientBuilder.protocols(getProtocols());
+            httpClientBuilder.connectTimeout(timeout_connect, TimeUnit.HOURS);
+            httpClientBuilder.readTimeout(timeout_read, TimeUnit.HOURS);
+            httpClientBuilder.writeTimeout(timeout_write, TimeUnit.HOURS);
 
 //            if (true) {
             if (BuildConfig.DEBUG) {
                 //httpClientBuilder.addInterceptor(new MockInterceptor(context));
                 //httpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
-                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.e("PRETTYLOGGER", "message:" + message));
-//                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-//                    @Override
-//
-//                    public void log(String message) {
-//                        if (isJSONValid(message))
-//                            Logger.json(message);
-//                        else
-//                            Log.e("PRETTYLOGGER", "message = " + message);
-//                    }
-//
-//                    public boolean isJSONValid(String jsonInString) {
-//                        try {
-//                            new JSONObject(jsonInString);
-//                        } catch (JSONException ex) {
-//                            // edited, to include @Arthur's comment
-//                            // e.g. in case JSONArray is valid as well...
-//                            try {
-//                                new JSONArray(jsonInString);
-//                            } catch (JSONException ex1) {
-//                                return false;
-//                            }
-//                        }
-//                        return true;
-//                    }
-//                });
+                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.e("PRETTYLOGGER", "message:" + message))
+                        .setLevel(HttpLoggingInterceptor.Level.BASIC)
+                        .setLevel(HttpLoggingInterceptor.Level.BODY)
+                        .setLevel(HttpLoggingInterceptor.Level.HEADERS);
+
+//                HttpLoggingInterceptor logging = new HttpLoggingInterc
                 logging.level(HttpLoggingInterceptor.Level.BODY);
                 httpClientBuilder.addInterceptor(logging);
             }
