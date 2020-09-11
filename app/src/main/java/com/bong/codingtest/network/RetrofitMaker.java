@@ -31,9 +31,9 @@ public class RetrofitMaker {
     private OkHttpClient okHttpClient;
     private static Retrofit retrofit;
     Dispatcher dispatcher;
-    private static final int timeout_read = 60;
-    private static final int timeout_connect = 60;
-    private static final int timeout_write = 60;
+    private static final Long timeout_read = 60L;
+    private static final Long timeout_connect = 60L;
+    private static final Long timeout_write = 180L;
 
     private static Retrofit getRetrofit(){
         if (retrofit == null) {

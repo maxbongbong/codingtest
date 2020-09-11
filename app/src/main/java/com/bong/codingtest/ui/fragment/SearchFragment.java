@@ -63,9 +63,8 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
         recyclerView = view.findViewById(R.id.recyclerview);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setHasFixedSize(true);
         textWatcher(searchView);
-
+        recyclerView.setHasFixedSize(true);
         return view;
     }
 
@@ -125,24 +124,22 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
     private void adapterData(Context context, List<User> item){
         SearchAdapter searchAdapter = new SearchAdapter(context, item, this);
         recyclerView.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
+//        searchAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void ItemListener(View v, int position, boolean setEnabled) {
+    public void ItemListener(View v, int position) {
         LinearLayout layout = this.getView().findViewById(R.id.layout);
         RecyclerView recyclerView = this.getView().findViewById(R.id.orgsRecyclerView);
         layout.setOnClickListener(v1 -> {
-            Log.e("setEnabled", "boolean = " + setEnabled);
-            if (SearchAdapter.setEnabled) {
+            if (userList.get(position).isStatus()) {
                 recyclerView.setVisibility(View.VISIBLE);
-                SearchAdapter.setEnabled = false;
-            } else if (!SearchAdapter.setEnabled) {
+                userList.get(position).setStatus(false);
+            } else if (!userList.get(position).isStatus()) {
                 recyclerView.setVisibility(View.GONE);
-                SearchAdapter.setEnabled = true;
+                userList.get(position).setStatus(true);
             }
         });
-
     }
 
     private void getOrgs(String s) {
@@ -203,13 +200,6 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
 //                    }
 //                })
 //        );
-    }
-
-    private void disposablesClear(){
-        if (disposables != null) {
-            disposables.clear();
-            disposables.dispose();
-        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.bong.codingtest.ui.fragment;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +19,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Holder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private Context context;
     private List<User> itemList;
     private LayoutInflater mInflate;
     private OnItemClickListener mListener;
-    static boolean setEnabled = true;
 
-    public interface OnItemClickListener{
-        void ItemListener(View v, int position, boolean setEnabled);
+    public interface OnItemClickListener {
+        void ItemListener(View v, int position);
     }
 
     public SearchAdapter(Context context, List<User> items, OnItemClickListener onItemClickListener) {
@@ -40,14 +38,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Holder> {
 
     @NonNull
     @Override
-    public SearchAdapter.Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mInflate = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = mInflate.inflate(R.layout.fragment_search, parent, false);
-        return new Holder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_search, parent, false);
+        viewHolder = new ViewHolder(view);
+        return (ViewHolder) viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SearchAdapter.Holder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         horizontalAdapter horizontalAdapter = new horizontalAdapter(SearchFragment.orgsList, context);
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
@@ -58,21 +57,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Holder> {
         Glide.with(holder.itemView.getContext())
                 .load(user.getAvatar_url())
                 .into(holder.userProfile);
-
-        holder.layout.setOnClickListener(v -> {
-            Log.e("setEnabled", "boolean = " + setEnabled);
-            if (SearchAdapter.setEnabled) {
-                holder.recyclerView.setVisibility(View.VISIBLE);
-                SearchAdapter.setEnabled = false;
-            } else if (!SearchAdapter.setEnabled) {
-                holder.recyclerView.setVisibility(View.GONE);
-                SearchAdapter.setEnabled = true;
-            }
-        });
-//        holder.layout.setOnClickListener(v -> {
-//            mListener.ItemListener(v, position, setEnabled);
-//            Log.e("position", "adapter position = " + position);
-//        });
     }
 
     @Override
@@ -80,18 +64,37 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Holder> {
         return itemList.size();
     }
 
-    public class Holder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layout;
         CircleImageView userProfile;
         TextView login, score;
         RecyclerView recyclerView;
-        public Holder(@NonNull View itemView) {
+
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             layout = itemView.findViewById(R.id.layout);
             userProfile = itemView.findViewById(R.id.profile);
             login = itemView.findViewById(R.id.login);
             score = itemView.findViewById(R.id.score);
             recyclerView = itemView.findViewById(R.id.orgsRecyclerView);
+
+            layout.setOnClickListener(v -> {
+//                int pos = getAdapterPosition();
+//                if(pos != RecyclerView.NO_POSITION){
+//                    if (mListener != null) {
+//                        mListener.ItemListener(v, pos);
+////                        itemList.set(pos, itemList.get(pos).setStatus(false));
+//                        notifyItemChanged(pos);
+//                    }
+//                }
+                if (itemList.get(getAdapterPosition()).isStatus()) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    itemList.get(getAdapterPosition()).setStatus(false);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    itemList.get(getAdapterPosition()).setStatus(true);
+                }
+            });
         }
     }
 }
