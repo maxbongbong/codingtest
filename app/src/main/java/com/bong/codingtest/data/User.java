@@ -4,25 +4,34 @@ import java.util.List;
 
 public class User {
     public String login;
-//    public int id;
-//    public String node_id;
+    public int id;
+    public String node_id;
     public String avatar_url;
-//    public String gravatar_id;
-//    public String url;
-//    public String html_url;
-//    public String followers_url;
-//    public String following_url;
-//    public String gists_url;
-//    public String starred_url;
-//    public String subscriptions_url;
-//    public String organizations_url;
-//    public String repos_url;
-//    public String events_url;
-//    public String received_events_url;
-//    public String type;
-//    public boolean site_admin;
-
+    public String gravatar_id;
+    public String url;
+    public String html_url;
+    public String followers_url;
+    public String following_url;
+    public String gists_url;
+    public String starred_url;
+    public String subscriptions_url;
+    public String organizations_url;
+    public String repos_url;
+    public String events_url;
+    public String received_events_url;
+    public String type;
+    public boolean site_admin;
+    public List<Org> orgList;
+    public boolean connectingToServer;
     public Integer score;
+
+    public boolean isConnectingToServer() {
+        return connectingToServer;
+    }
+
+    public void setConnectingToServer(boolean connectingToServer) {
+        this.connectingToServer = connectingToServer;
+    }
 
     public String getLogin() {
         return login;

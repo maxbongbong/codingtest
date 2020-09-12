@@ -13,5 +13,5 @@ public interface Apiservice {
     Single<Item> getUserRx(@Query("login") String login);
 
     @GET
-    Single<List<Orgs>> getorgs(@Url String orgs);
+    Single<List<Org>> getorgs(@Url String orgs);
 }

@@ -51,16 +51,13 @@ public class RetrofitMaker {
     private OkHttpClient getHttpClient(final Context context) {
         if (okHttpClient == null) {
             OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-            //httpClientBuilder.protocols(getProtocols());
             httpClientBuilder.connectTimeout(timeout_connect, TimeUnit.HOURS);
             httpClientBuilder.readTimeout(timeout_read, TimeUnit.HOURS);
             httpClientBuilder.writeTimeout(timeout_write, TimeUnit.HOURS);
 
-//            if (true) {
             if (BuildConfig.DEBUG) {
-                //httpClientBuilder.addInterceptor(new MockInterceptor(context));
-                //httpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
                 httpClientBuilder.addInterceptor(chain -> {
+                    // Rate limit을 늘리기 위해서 수동으로 생성한 Github Personal Access Token
                     Request request = chain.request().newBuilder().addHeader("Authorization", "token " + com.bong.codingtest.BuildConfig.GITHUB_TK).build();
                     return chain.proceed(request);
                 });
@@ -70,11 +67,9 @@ public class RetrofitMaker {
                         .setLevel(HttpLoggingInterceptor.Level.BODY)
                         .setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
-//                HttpLoggingInterceptor logging = new HttpLoggingInterc
                 logging.level(HttpLoggingInterceptor.Level.BODY);
                 httpClientBuilder.addInterceptor(logging);
             }
-//            httpClientBuilder.connectionPool(new ConnectionPool(1, 5, TimeUnit.MINUTES));
 
             dispatcher = new Dispatcher();
             httpClientBuilder.dispatcher(dispatcher);
@@ -83,3 +78,6 @@ public class RetrofitMaker {
         return okHttpClient;
     }
 }
+
+
+

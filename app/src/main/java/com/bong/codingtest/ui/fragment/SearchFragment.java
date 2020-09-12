@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bong.codingtest.R;
 import com.bong.codingtest.data.Apiservice;
 import com.bong.codingtest.data.Item;
-import com.bong.codingtest.data.Orgs;
+import com.bong.codingtest.data.Org;
 import com.bong.codingtest.data.User;
 import com.bong.codingtest.network.RetrofitMaker;
 import com.bong.codingtest.ui.main.MainActivity;
@@ -37,30 +37,31 @@ import io.reactivex.schedulers.Schedulers;
 
 public class SearchFragment extends Fragment implements SearchAdapter.OnItemClickListener {
     protected CompositeDisposable disposables;
-    private SearchView searchView;
     private ProgressBar progressBar;
     private RecyclerView recyclerView1;
     private List<User> userList;
+    private SearchAdapter searchAdapter;
+    private List<Org> test;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.recyclerview, container, false);
-        Context context = view.getContext();
+        View view = inflater.inflate(R.layout.item_search, container, false);
         progressBar = view.findViewById(R.id.progressBar);
-        searchView = MainActivity.searchView;
         disposables = new CompositeDisposable();
         recyclerView1 = view.findViewById(R.id.recyclerview);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(view.getContext());
         recyclerView1.setLayoutManager(mLayoutManager);
-        textWatcher(searchView);
         recyclerView1.setHasFixedSize(true);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SearchView searchView = MainActivity.searchView;
+        textWatcher(searchView);
     }
 
     @SuppressLint("CheckResult")
@@ -97,66 +98,55 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                getApi(newText);
                 return false;
             }
         });
     }
 
     private void adapterData(Context context, List<User> item) {
-        SearchAdapter searchAdapter = new SearchAdapter(context, item, this);
+        this.searchAdapter = new SearchAdapter(context, item, this);
         recyclerView1.setAdapter(searchAdapter);
     }
 
     @Override
     public void ItemListener(View v, int position, String login) {
-        Log.e("position1", "position1 = " + position);
-        getOrgs("users/" + login + "/orgs");
+        getOrgs("users/" + login + "/orgs", position);
     }
 
-    private void getOrgs(String s) {
-        RecyclerView recyclerView2 = this.getView().findViewById(R.id.orgsRecyclerView);
-        ProgressBar progressBar = this.getView().findViewById(R.id.progress_horizontal);
-        progressBar.setVisibility(View.VISIBLE);
-        ArrayList<String> orgsAvatarList = new ArrayList<>();
-        HorizontalAdapter horizontalAdapter = new HorizontalAdapter(orgsAvatarList, getContext());
+    private void getOrgs(String s, int position) {
+        searchAdapter.getItemList().get(position).connectingToServer = true;
+        searchAdapter.notifyItemChanged(position);
         Apiservice apiservice = new RetrofitMaker().createService(getContext(), Apiservice.class);
-        Single<List<Orgs>> item = apiservice.getorgs(s);
+        Single<List<Org>> item = apiservice.getorgs(s);
         disposables.add(item
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<List<Orgs>>() {
+                .subscribeWith(new DisposableSingleObserver<List<Org>>() {
 
                     @Override
-                    public void onSuccess(List<Orgs> orgsList) {
-                        for (int i = 0; i < orgsList.size(); i++) {
-                            orgsAvatarList.add(orgsList.get(i).getAvatar_url());
-                        }
-                        recyclerView2.setHasFixedSize(true);
-                        recyclerView2.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                        if (orgsAvatarList.size() == 0) {
-                            recyclerView2.setVisibility(View.GONE);
-                            progressBar.setVisibility(View.GONE);
-                            toastMessage();
-                            Log.e("orgs", "size = " + orgsAvatarList.size());
-                            Log.e("complete", "complete");
+                    public void onSuccess(List<Org> orgsList) {
+                        if (searchAdapter.getItemList().get(position) != null) {
+                            Log.e("url", "url = " + searchAdapter.getItemList().get(position).orgList);
+                            searchAdapter.getItemList().get(position).connectingToServer = false;
+                            searchAdapter.getItemList().get(position).orgList = orgsList;
+                            searchAdapter.notifyItemChanged(position);
                         } else {
-                            recyclerView2.setAdapter(horizontalAdapter);
-                            progressBar.setVisibility(View.GONE);
-                            recyclerView2.setVisibility(View.VISIBLE);
+                            searchAdapter.getItemList().get(position).connectingToServer = false;
+                            searchAdapter.notifyItemChanged(position);
+                            toastMessage();
                         }
-                        horizontalAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        searchAdapter.getItemList().get(position).connectingToServer = false;
                         Log.e("e", "e = " + e);
                     }
                 })
         );
     }
 
-    public void toastMessage(){
+    private void toastMessage() {
         Toast toast = Toast.makeText(getActivity(), getResources().getString(R.string.app_dataNull), Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();

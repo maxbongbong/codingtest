@@ -1,61 +1,68 @@
 package com.bong.codingtest.ui.fragment;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bong.codingtest.R;
+import com.bong.codingtest.data.Org;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HorizontalAdapter extends RecyclerView.Adapter<HorizontalAdapter.horizontalViewHolder> {
     private Context context;
-//    private List<Orgs> orgsList;
-    private ArrayList<String> orgsList;
-    private LayoutInflater mInflate;
+    private List<Org> orgsList;
 
-
-    public HorizontalAdapter(ArrayList<String> orgs, Context context) {
-        orgsList = orgs;
+    public HorizontalAdapter(List<Org> org, Context context) {
+        orgsList = org;
         this.context = context;
     }
 
     @NonNull
     @Override
     public HorizontalAdapter.horizontalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mInflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = mInflate.inflate(R.layout.orgsimage, parent, false);
+        View view = LayoutInflater.from(context.getApplicationContext()).inflate(R.layout.orgsimage, parent, false);
         return new horizontalViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HorizontalAdapter.horizontalViewHolder holder, int position) {
-        Glide.with(context)
-                .load(orgsList.get(position))
-                .into(holder.orgsProfile);
+        if (orgsList.get(position) != null) {
+            holder.orgsProfile.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(orgsList.get(position).getAvatar_url())
+                    .into(holder.orgsProfile);
+        } else {
+            holder.orgsProfile.setVisibility(View.GONE);
+            toastMessage();
+        }
     }
 
     @Override
     public int getItemCount() {
-        if (orgsList.size() != 0) {
-            return orgsList.size();
-        } else {
-            return 3;
-        }
+        return orgsList.size();
     }
 
-    public static class horizontalViewHolder extends RecyclerView.ViewHolder {
+    static class horizontalViewHolder extends RecyclerView.ViewHolder {
         CircleImageView orgsProfile;
-        public horizontalViewHolder(@NonNull View itemView) {
+        horizontalViewHolder(@NonNull View itemView) {
             super(itemView);
             orgsProfile = itemView.findViewById(R.id.orgsProfile);
         }
+    }
+    private void toastMessage() {
+        Toast toast = Toast.makeText(context, R.string.app_dataNull, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }
