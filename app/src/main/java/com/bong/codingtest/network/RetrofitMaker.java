@@ -3,25 +3,17 @@ package com.bong.codingtest.network;
 import android.content.Context;
 import android.util.Log;
 
-import com.bong.codingtest.BuildConfig;
 import com.bong.codingtest.data.Apiservice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.BuildConfig;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Dispatcher;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -35,7 +27,7 @@ public class RetrofitMaker {
     private static final Long timeout_connect = 60L;
     private static final Long timeout_write = 180L;
 
-    private static Retrofit getRetrofit(){
+    private static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder().baseUrl(Apiservice.USER_API_URL).build();
         }
@@ -68,6 +60,11 @@ public class RetrofitMaker {
             if (BuildConfig.DEBUG) {
                 //httpClientBuilder.addInterceptor(new MockInterceptor(context));
                 //httpClientBuilder.addNetworkInterceptor(new StethoInterceptor());
+                httpClientBuilder.addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder().addHeader("Authorization", "token " + com.bong.codingtest.BuildConfig.GITHUB_TK).build();
+                    return chain.proceed(request);
+                });
+
                 HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.e("PRETTYLOGGER", "message:" + message))
                         .setLevel(HttpLoggingInterceptor.Level.BASIC)
                         .setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -81,10 +78,6 @@ public class RetrofitMaker {
 
             dispatcher = new Dispatcher();
             httpClientBuilder.dispatcher(dispatcher);
-//            httpClientBuilder.addInterceptor(chain -> {
-//                Request request = chain.request().newBuilder().addHeader("q", "a").build();
-//                return chain.proceed(request);
-//            });
             okHttpClient = httpClientBuilder.build();
         }
         return okHttpClient;

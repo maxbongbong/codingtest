@@ -1,14 +1,15 @@
 package com.bong.codingtest.ui.fragment;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bong.codingtest.R;
@@ -24,9 +25,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private List<User> itemList;
     private LayoutInflater mInflate;
     private OnItemClickListener mListener;
+    HorizontalAdapter horizontalAdapter;
 
     public interface OnItemClickListener {
-        void ItemListener(View v, int position);
+        void ItemListener(View v, int position, String login);
     }
 
     public SearchAdapter(Context context, List<User> items, OnItemClickListener onItemClickListener) {
@@ -47,10 +49,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        horizontalAdapter horizontalAdapter = new horizontalAdapter(SearchFragment.orgsList, context);
-        holder.recyclerView.setHasFixedSize(true);
-        holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        holder.recyclerView.setAdapter(horizontalAdapter);
         User user = itemList.get(position);
         holder.login.setText(user.getLogin());
         holder.score.setText(String.valueOf(user.getScore()));
@@ -69,6 +67,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         CircleImageView userProfile;
         TextView login, score;
         RecyclerView recyclerView;
+        ProgressBar progressBar;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,24 +75,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             userProfile = itemView.findViewById(R.id.profile);
             login = itemView.findViewById(R.id.login);
             score = itemView.findViewById(R.id.score);
+            progressBar = itemView.findViewById(R.id.progress_horizontal);
             recyclerView = itemView.findViewById(R.id.orgsRecyclerView);
 
             layout.setOnClickListener(v -> {
-//                int pos = getAdapterPosition();
-//                if(pos != RecyclerView.NO_POSITION){
-//                    if (mListener != null) {
-//                        mListener.ItemListener(v, pos);
-////                        itemList.set(pos, itemList.get(pos).setStatus(false));
-//                        notifyItemChanged(pos);
-//                    }
-//                }
-                if (itemList.get(getAdapterPosition()).isStatus()) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    itemList.get(getAdapterPosition()).setStatus(false);
-                } else {
-                    recyclerView.setVisibility(View.GONE);
-                    itemList.get(getAdapterPosition()).setStatus(true);
-                }
+                Log.e("position2", "position = " + getAdapterPosition());
+                mListener.ItemListener(v, getAdapterPosition(), itemList.get(getAdapterPosition()).getLogin());
             });
         }
     }

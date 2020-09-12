@@ -20,6 +20,14 @@ android {
         }
     }
 
+    flavorDimensions "mode"
+    productFlavors {
+        playstore {
+            dimension "mode"
+            buildConfigField("String", "GITHUB_TK", GITHUB_TK)
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -80,7 +88,8 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
 //    androidTestImplementation "androidx.room:room-testing:$roomVersion"
     implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // For Kotlin use kapt instead of annotationProcessor
 
     // optional - RxJava support for Room
     implementation "androidx.room:room-rxjava2:$room_version"

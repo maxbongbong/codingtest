@@ -21,15 +21,6 @@ public class User {
 //    public String received_events_url;
 //    public String type;
 //    public boolean site_admin;
-    public boolean status = true;
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
 
     public Integer score;
 
