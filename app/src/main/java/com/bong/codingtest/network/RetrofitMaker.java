@@ -3,10 +3,12 @@ package com.bong.codingtest.network;
 import android.content.Context;
 import android.util.Log;
 
+import com.bong.codingtest.BuildConfig;
 import com.bong.codingtest.data.Apiservice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.orhanobut.logger.BuildConfig;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
@@ -56,19 +58,18 @@ public class RetrofitMaker {
             httpClientBuilder.writeTimeout(timeout_write, TimeUnit.HOURS);
 
             if (BuildConfig.DEBUG) {
-                httpClientBuilder.addInterceptor(chain -> {
-                    // Rate limit을 늘리기 위해서 수동으로 생성한 Github Personal Access Token
-                    Request request = chain.request().newBuilder().addHeader("Authorization", "token " + com.bong.codingtest.BuildConfig.GITHUB_TK).build();
-                    return chain.proceed(request);
+                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> {
+                    Log.e("PRETTYLOGGER", message);
                 });
-
-                HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.e("PRETTYLOGGER", "message:" + message))
-                        .setLevel(HttpLoggingInterceptor.Level.BASIC)
-                        .setLevel(HttpLoggingInterceptor.Level.BODY)
-                        .setLevel(HttpLoggingInterceptor.Level.HEADERS);
-
                 logging.level(HttpLoggingInterceptor.Level.BODY);
                 httpClientBuilder.addInterceptor(logging);
+
+                httpClientBuilder.addInterceptor(chain -> {
+//                     Rate limit을 늘리기 위해서 수동으로 생성한 Github Personal Access Token
+                    Request request = chain.request().newBuilder().addHeader("Authorization", "token " + BuildConfig.GITHUB_TK).build();
+
+                    return chain.proceed(request);
+                });
             }
 
             dispatcher = new Dispatcher();
