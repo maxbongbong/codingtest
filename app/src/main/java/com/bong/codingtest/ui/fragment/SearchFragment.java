@@ -114,7 +114,11 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
     }
 
     private void getOrgs(String s, int position) {
+        if (searchAdapter.getItemList().get(position).orgList != null) {
+            return ;
+        }
         searchAdapter.getItemList().get(position).connectingToServer = true;
+
         searchAdapter.notifyItemChanged(position);
         Apiservice apiservice = new RetrofitMaker().createService(getContext(), Apiservice.class);
         Single<List<Org>> item = apiservice.getorgs(s);

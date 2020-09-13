@@ -66,12 +66,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
 
         if (user.orgList != null) {
-            holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
-            Log.e("1", "1");
-            holder.recyclerView.setVisibility(View.VISIBLE);
-            holder.recyclerView.setAdapter(new HorizontalAdapter(user.orgList, context));
+            if (user.orgList.size() == 0) {
+                holder.empty.setVisibility(View.VISIBLE);
+                holder.recyclerView.setVisibility(View.GONE);
+                holder.recyclerView.setAdapter(null);
+            } else {
+                holder.empty.setVisibility(View.GONE);
+                holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                holder.recyclerView.setVisibility(View.VISIBLE);
+                holder.recyclerView.setAdapter(new HorizontalAdapter(user.orgList, context));
+            }
         } else {
-            holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false));
+            holder.empty.setVisibility(View.GONE);
+            holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             holder.recyclerView.setVisibility(View.GONE);
             holder.recyclerView.setAdapter(null);
         }
@@ -85,7 +92,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layout;
         CircleImageView userProfile;
-        TextView login, score;
+        TextView login, score, empty;
         RecyclerView recyclerView;
         ProgressBar progressBar;
 
@@ -97,6 +104,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             score = itemView.findViewById(R.id.score);
             progressBar = itemView.findViewById(R.id.progress_horizontal);
             recyclerView = itemView.findViewById(R.id.orgsRecyclerView);
+            empty = itemView.findViewById(R.id.empty);
 
             layout.setOnClickListener(v -> {
                 mListener.ItemListener(v, getAdapterPosition(), itemList.get(getAdapterPosition()).getLogin());
