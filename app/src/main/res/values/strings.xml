@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">codingTest</string>
+    <string name="app_dataNull">"데이터가 없습니다."</string>
+</resources>
