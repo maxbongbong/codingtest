@@ -106,9 +106,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             recyclerView = itemView.findViewById(R.id.orgsRecyclerView);
             empty = itemView.findViewById(R.id.empty);
 
-            layout.setOnClickListener(v -> {
-                mListener.ItemListener(v, getAdapterPosition(), itemList.get(getAdapterPosition()).getLogin());
-            });
+            layout.setOnClickListener(v -> mListener.ItemListener(v, getAdapterPosition(), itemList.get(getAdapterPosition()).getLogin()));
         }
     }
 }

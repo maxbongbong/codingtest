@@ -7,9 +7,6 @@ import com.bong.codingtest.BuildConfig;
 import com.bong.codingtest.data.Apiservice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 
@@ -22,9 +19,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitMaker {
+    Dispatcher dispatcher;
     private OkHttpClient okHttpClient;
     private static Retrofit retrofit;
-    Dispatcher dispatcher;
     private static final Long timeout_read = 60L;
     private static final Long timeout_connect = 60L;
     private static final Long timeout_write = 180L;

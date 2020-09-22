@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.searchView);
     }
 
+    /**
+     * Fragment 띄우기
+     * */
     public void changeFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
