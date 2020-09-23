@@ -126,7 +126,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnItemClic
     private void getApi() {
         progressBar.setVisibility(View.VISIBLE);
         Apiservice apiservice = new RetrofitMaker().createService(getContext(), Apiservice.class);
-        Single<Response<Item>> item = apiservice.getUserRx(null);
+        Single<Response<Item>> item = apiservice.getUserRx("1");
 
         disposables.add(item
                 .subscribeOn(Schedulers.io())
