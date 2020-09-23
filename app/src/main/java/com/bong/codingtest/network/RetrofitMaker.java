@@ -63,7 +63,7 @@ public class RetrofitMaker {
 
                 httpClientBuilder.addInterceptor(chain -> {
 //                     Rate limit을 늘리기 위해서 수동으로 생성한 Github Personal Access Token
-                    Request request = chain.request().newBuilder().addHeader("Authorization", "token " + BuildConfig.GITHUB_TK).build();
+                    Request request = chain.request().newBuilder().addHeader("Authorization", "token" + BuildConfig.GITHUB_TK).build();
 
                     return chain.proceed(request);
                 });
